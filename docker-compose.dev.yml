@@ -1,0 +1,57 @@
+version: '3.8'
+
+# Docker Compose para desarrollo con hot reload
+# Uso: docker-compose -f docker-compose.dev.yml up
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: proyecto-postgres-dev
+    environment:
+      POSTGRES_DB: proyecto_db
+      POSTGRES_USER: proyecto_user
+      POSTGRES_PASSWORD: proyecto_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - proyecto-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proyecto_user -d proyecto_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: proyecto-app-dev
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Puerto para debug remoto
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/proyecto_db
+      SPRING_DATASOURCE_USERNAME: proyecto_user
+      SPRING_DATASOURCE_PASSWORD: proyecto_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - proyecto-network
+    volumes:
+      # Montar código fuente para desarrollo (opcional)
+      - ./src:/app/src
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+    driver: local
+
+networks:
+  proyecto-network:
+    driver: bridge

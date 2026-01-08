@@ -1,5 +1,6 @@
 com\tuempresa\proyecto\domain\valueobject\Money.class
 com\tuempresa\proyecto\infrastructure\persistence\adapter\ProductEntityMapper.class
+com\tuempresa\proyecto\domain\util\UuidGenerator.class
 com\tuempresa\proyecto\application\dto\request\CreateProductRequest.class
 com\tuempresa\proyecto\infrastructure\persistence\entity\ProductEntity.class
 com\tuempresa\proyecto\domain\model\Product.class

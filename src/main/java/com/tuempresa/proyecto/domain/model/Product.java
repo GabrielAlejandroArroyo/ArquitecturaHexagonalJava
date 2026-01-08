@@ -1,5 +1,6 @@
 package com.tuempresa.proyecto.domain.model;
 
+import com.tuempresa.proyecto.domain.util.UuidGenerator;
 import com.tuempresa.proyecto.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class Product {
     public static Product create(String name, String description, Money price, 
                                  Integer stock, String category) {
         Product product = new Product();
-        product.id = UUID.randomUUID();
+        product.id = UuidGenerator.generate();
         product.name = name;
         product.description = description;
         product.price = price;
